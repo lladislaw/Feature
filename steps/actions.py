@@ -53,18 +53,12 @@ def step_impl(context):
     screen.save('4_chose_transmission.png', 'PNG')
 
 
-@step('Ввели цену от "{price}" рублей')
-def step_impl(context, price):
+@step('Ввели цену от "{price}" до "{price2}" рублей')
+def step_impl(context, price, price2):
     price1_input = context.driver.find_element_by_xpath("//*[@placeholder='Цена от']")
     price1_input.send_keys(f'{price}')
-
-
-@step('Ввели цену до "{price}" рублей')
-def step_impl(context, price):
     price2_input = context.driver.find_element_by_xpath("//*[@placeholder='до, руб.']")
-    price2_input.send_keys(f'{price}')
-    screen = ImageGrab.grab()
-    screen.save('5_introduce_price.png', 'PNG')
+    price2_input.send_keys(f'{price2}')
 
 
 @then("Нажали на кнопку поиска")
