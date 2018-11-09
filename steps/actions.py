@@ -3,7 +3,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
 from PIL import ImageGrab
 
 
@@ -16,7 +15,7 @@ def step_impl(context):
 
 
 
-@then("Выбрали категорию Авто")
+@then('Выбрали категорию Авто')
 def step_impl(context):
     click_category = context.driver.find_element_by_id('category')
     click_category.click()
@@ -42,12 +41,10 @@ def step_impl(context, car):
 
 
 
-@step('Выбрали тип коробки передач Механика')
+@step('Выбрали тип коробки передач "Механика"')
 def step_impl(context):
-    click_transmission = context.driver.find_element_by_xpath("//*[@data-marker='params[695](8851)']")
-    actions = ActionChains(context.driver)
-    actions.move_to_element(click_transmission).perform()
-    # click_transmission.execute_script("arguments[0].scrollIntoView();", element)
+    click_transmission = context.driver.find_element_by_xpath("//*[@data-marker='params[185](861)']")
+    context.driver.execute_script("arguments[0].scrollIntoView();", click_transmission)
     wait_for_transmission = WebDriverWait(context.driver, 5).until(
         EC.visibility_of_element_located((By.XPATH, "//*[@data-marker='params[185](861)']")))
     click_transmission = context.driver.find_element_by_xpath("//*[@data-marker='params[185](861)']")
