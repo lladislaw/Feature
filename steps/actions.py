@@ -3,8 +3,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from PIL import ImageGrab
 from datetime import datetime
+import smtplib
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import os
+from . import data
 
 
 @when("Зашли на сайт avito.ru")
@@ -25,8 +30,10 @@ def step_impl(context):
         choose_category.click()
     except Exception as e:
         print(e)
-        now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        context.driver.get_screenshot_as_file('1_choose_category-%s.png' % now)
+    #   now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    #   context.driver.get_screenshot_as_file('1_choose_category-%s.png' % now)
+        context.driver.get_screenshot_as_file('1_choose_category.png')
+        send_to_mail("Ошибка при выборе категории", os.path.abspath('1_choose_category.png'))
 
 
 
@@ -41,8 +48,8 @@ def step_impl(context, car):
         choose_car.click()
     except Exception as e:
         print(e)
-        now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        context.driver.get_screenshot_as_file('2_choose_car-%s.png' % now)
+        context.driver.get_screenshot_as_file('2_choose_car.png')
+        send_to_mail("Ошибка при выборе марки", os.path.abspath('2_choose_car.png'))
 
 
 
@@ -57,8 +64,8 @@ def step_impl(context):
         click_transmission.click()
     except Exception as e:
         print(e)
-        now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        context.driver.get_screenshot_as_file('3_choose_transmission-%s.png' % now)
+        context.driver.get_screenshot_as_file('3_choose_transmission.png')
+        send_to_mail("Ошибка при выборе коробки передач", os.path.abspath('3_choose_transmission.png'))
 
 
 
@@ -71,8 +78,8 @@ def step_impl(context, price, price2):
         price2_input.send_keys(f'{price2}')
     except Exception as e:
         print(e)
-        now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        context.driver.get_screenshot_as_file('4_input_price-%s.png' % now)
+        context.driver.get_screenshot_as_file('4_input_price.png')
+        send_to_mail("Ошибка при ввода цен", os.path.abspath('4_input_price.png'))
 
 
 
@@ -83,8 +90,8 @@ def step_impl(context):
         click_search.click()
     except Exception as e:
         print(e)
-        now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        context.driver.get_screenshot_as_file('5_click_search-%s.png' % now)
+        context.driver.get_screenshot_as_file('5_click_search.png')
+        send_to_mail("Ошибка при нажатии кнопки поиска", os.path.abspath('5_click_search.png'))
 
 
 
@@ -99,7 +106,28 @@ def step_impl(context, sort):
         choose_cheaper.click()
     except Exception as e:
         print(e)
-        now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        context.driver.get_screenshot_as_file('6_choose_sort-%s.png' % now)
+        context.driver.get_screenshot_as_file('6_choose_sort.png')
+        send_to_mail("Ошибка при выборе сортировки", os.path.abspath('6_choose_sort.png'))
+
+
+
+def send_to_mail(text, path):
+    fromaddress = 'selenium255.255.255.0@gmail.com'
+    toaddress = 'vladcs16rus45@gmail.com'
+    msg = MIMEMultipart()
+    msg['From'] = fromaddress
+    msg['To'] = toaddress
+    msg['Subject'] = 'Subject'
+    msg.attach(MIMEText(text))
+    screen_file = MIMEApplication(open(path, 'rb').read())
+    screen_file.add_header('Content-Disposition', 'attachment', filename=path)
+    msg.attach(screen_file)
+    smtp = smtplib.SMTP('smtp.gmail.com', 587)
+    smtp.starttls()
+    smtp.login(fromaddress, data.password)
+    smtp.sendmail(fromaddress, toaddress, msg.as_string())
+    smtp.quit()
+    os.remove(path)
+
 
 
